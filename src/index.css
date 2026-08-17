@@ -18,12 +18,40 @@ body,
   height: 100%;
 }
 
+/* Mobile Safari's toolbars change the viewport height as you scroll; dvh keeps
+   the app exactly one screen tall instead of overflowing behind them. */
+@supports (height: 100dvh) {
+  html,
+  body,
+  #root {
+    height: 100dvh;
+  }
+}
+
+html {
+  /* stop iOS from bumping font sizes when the phone is rotated to landscape */
+  -webkit-text-size-adjust: 100%;
+}
+
 body {
   margin: 0;
   font-family: var(--font-sans);
   background: #fbfaf6;
   color: #16202e;
   overflow-x: hidden;
+  /* the canvas handles its own panning — never rubber-band the page itself */
+  overscroll-behavior: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* iOS zooms the whole page when a focused field is under 16px, which then
+   leaves the layout stranded. Keep every control at least 16px. */
+input,
+select,
+textarea,
+button {
+  font-size: max(16px, 1em);
+  font-family: inherit;
 }
 
 @media print {

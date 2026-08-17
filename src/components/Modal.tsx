@@ -38,7 +38,7 @@ export default function Modal({
             wide ? 'sm:w-[34rem]' : 'sm:w-[26rem]'
           }`}
         >
-          <div className="flex items-center justify-between gap-2 border-b border-slate-200 bg-white px-4 py-3 sm:rounded-t-2xl">
+          <div className="flex items-center justify-between gap-2 border-b border-slate-200 bg-white px-4 pt-[max(0.75rem,env(safe-area-inset-top))] pb-3 sm:rounded-t-2xl sm:pt-3">
             <div className="min-w-0 flex-1">
               {header ?? (
                 <Dialog.Title className={hideTitle ? 'sr-only' : 'truncate font-bold'}>
@@ -51,12 +51,12 @@ export default function Modal({
               type="button"
               onClick={onRequestClose}
               aria-label={ar.close}
-              className="shrink-0 rounded-lg px-2 py-1 text-xl leading-none text-slate-500 hover:bg-slate-100"
+              className="min-h-11 min-w-11 shrink-0 rounded-lg px-2 text-xl leading-none text-slate-500 active:bg-slate-100 sm:min-h-0 sm:min-w-0 sm:py-1 sm:hover:bg-slate-100"
             >
               ✕
             </button>
           </div>
-          <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 py-4">
+          <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 pt-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
             {children}
           </div>
         </Dialog.Content>

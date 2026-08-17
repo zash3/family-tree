@@ -75,6 +75,14 @@ export default function TreeView({
     fit()
   }, [layout, fit])
 
+  // Rotating an iPhone changes the canvas aspect ratio completely, which would
+  // otherwise leave the tree parked off-screen.
+  useEffect(() => {
+    const onOrientation = () => window.setTimeout(fit, 150)
+    window.addEventListener('orientationchange', onOrientation)
+    return () => window.removeEventListener('orientationchange', onOrientation)
+  }, [fit])
+
   const centerOn = useCallback(
     (id: string) => {
       const svg = svgRef.current
@@ -137,10 +145,11 @@ export default function TreeView({
         </g>
       </svg>
 
-      <div className="no-print absolute bottom-4 start-4 flex flex-col gap-1 rounded-xl bg-white/90 p-1 shadow-md ring-1 ring-black/5">
-        <button className="size-9 rounded-lg text-lg hover:bg-slate-100" onClick={() => zoomBy(1.3)} title={ar.zoomIn} aria-label={ar.zoomIn}>+</button>
-        <button className="size-9 rounded-lg text-lg hover:bg-slate-100" onClick={() => zoomBy(1 / 1.3)} title={ar.zoomOut} aria-label={ar.zoomOut}>−</button>
-        <button className="size-9 rounded-lg text-sm hover:bg-slate-100" onClick={fit} title={ar.resetView} aria-label={ar.resetView}>⤢</button>
+      {/* kept clear of the iPhone home indicator */}
+      <div className="no-print absolute bottom-[max(1rem,env(safe-area-inset-bottom))] start-4 flex flex-col gap-1 rounded-xl bg-white/90 p-1 shadow-md ring-1 ring-black/5">
+        <button className="size-11 rounded-lg text-lg active:bg-slate-200 sm:size-9 sm:hover:bg-slate-100" onClick={() => zoomBy(1.3)} title={ar.zoomIn} aria-label={ar.zoomIn}>+</button>
+        <button className="size-11 rounded-lg text-lg active:bg-slate-200 sm:size-9 sm:hover:bg-slate-100" onClick={() => zoomBy(1 / 1.3)} title={ar.zoomOut} aria-label={ar.zoomOut}>−</button>
+        <button className="size-11 rounded-lg text-sm active:bg-slate-200 sm:size-9 sm:hover:bg-slate-100" onClick={fit} title={ar.resetView} aria-label={ar.resetView}>⤢</button>
       </div>
     </div>
   )

@@ -55,12 +55,13 @@ export default function PersonDetail({
     <Dialog.Root open={open} onOpenChange={(next) => !next && requestClose()}>
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 z-40 bg-black/40" />
+        {/* phones get a thumb-reachable bottom sheet; tablets keep the side panel */}
         <Dialog.Content
           dir="rtl"
           aria-describedby={undefined}
-          className="fixed inset-y-0 start-0 z-50 flex w-full flex-col bg-[#fbfaf6] shadow-2xl focus:outline-none sm:inset-y-3 sm:start-3 sm:w-[26rem] sm:rounded-2xl"
+          className="fixed inset-x-0 bottom-0 z-50 flex max-h-[88dvh] w-full flex-col rounded-t-2xl bg-[#fbfaf6] shadow-2xl focus:outline-none sm:inset-x-auto sm:start-3 sm:top-3 sm:bottom-3 sm:max-h-none sm:w-[26rem] sm:rounded-2xl"
         >
-          <div className="flex items-center justify-between border-b border-slate-200 bg-white px-4 py-3 sm:rounded-t-2xl">
+          <div className="flex items-center justify-between rounded-t-2xl border-b border-slate-200 bg-white px-4 py-3">
             <div className="flex items-center gap-2">
               <span className="size-3 rounded-full bg-[var(--color-accent)]" aria-hidden />
               <Dialog.Title className="font-bold">{person.branch || ar.root}</Dialog.Title>
@@ -70,7 +71,7 @@ export default function PersonDetail({
                 <button
                   onClick={back}
                   aria-label={ar.back}
-                  className="rounded-lg px-2 py-1 text-xl leading-none text-slate-500 hover:bg-slate-100"
+                  className="min-h-11 min-w-11 rounded-lg px-2 text-xl leading-none text-slate-500 active:bg-slate-100 sm:min-h-0 sm:min-w-0 sm:py-1 sm:hover:bg-slate-100"
                 >
                   ←
                 </button>
@@ -78,7 +79,7 @@ export default function PersonDetail({
               <button
                 onClick={onClose}
                 aria-label={ar.close}
-                className="rounded-lg px-2 py-1 text-xl leading-none text-slate-500 hover:bg-slate-100"
+                className="min-h-11 min-w-11 rounded-lg px-2 text-xl leading-none text-slate-500 active:bg-slate-100 sm:min-h-0 sm:min-w-0 sm:py-1 sm:hover:bg-slate-100"
               >
                 ✕
               </button>
@@ -163,7 +164,7 @@ export default function PersonDetail({
             )}
           </div>
 
-          <div className="flex flex-wrap gap-2 border-t border-slate-200 bg-white px-4 py-3 sm:rounded-b-2xl">
+          <div className="flex flex-wrap gap-2 border-t border-slate-200 bg-white px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:rounded-b-2xl sm:pb-3">
             <button className={btn} onClick={() => onAddChild(person.id, 'male')}>
               {ar.addSon}
             </button>
@@ -181,7 +182,7 @@ export default function PersonDetail({
               {ar.edit}
             </button>
             <button
-              className="rounded-lg border border-red-200 px-3 py-1.5 text-sm text-red-600 hover:bg-red-50"
+              className="min-h-11 rounded-lg border border-red-200 px-3 text-sm text-red-600 active:bg-red-50 sm:min-h-0 sm:py-1.5 sm:hover:bg-red-50"
               onClick={() => onDelete(person.id)}
             >
               {ar.remove}
@@ -194,7 +195,7 @@ export default function PersonDetail({
 }
 
 const btn =
-  'rounded-lg border border-slate-200 px-3 py-1.5 text-sm text-slate-700 hover:bg-slate-100'
+  'min-h-11 rounded-lg border border-slate-200 px-3 text-sm text-slate-700 active:bg-slate-100 sm:min-h-0 sm:py-1.5 sm:hover:bg-slate-100'
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
@@ -218,7 +219,7 @@ function RelationRow({
     <li>
       <button
         onClick={() => onClick(person.id)}
-        className="flex w-full items-center justify-between rounded-xl bg-white px-3 py-2 text-start ring-1 ring-slate-200 hover:bg-slate-50"
+        className="flex min-h-11 w-full items-center justify-between rounded-xl bg-white px-3 py-2 text-start ring-1 ring-slate-200 active:bg-slate-100 sm:min-h-0 sm:hover:bg-slate-50"
       >
         <span className="font-bold">
           {person.name}

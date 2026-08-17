@@ -14,6 +14,7 @@ export const ar = {
   save: 'حفظ',
   cancel: 'إلغاء',
   close: 'إغلاق',
+  tools: 'أدوات',
   back: 'رجوع',
   confirm: 'تأكيد',
 
