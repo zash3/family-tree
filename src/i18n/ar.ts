@@ -3,6 +3,8 @@ export const ar = {
   appTitle: 'شجرة العائلة',
   members: (n: string) => `${n} فرداً`,
   searchPlaceholder: 'ابحث عن اسم، نسب، أو فرع...',
+  /** short form for the narrow filter box inside the person pickers */
+  filterPlaceholder: 'تصفية بالاسم...',
   noResults: 'لا توجد نتائج',
   allBranches: 'كل الفروع',
 
@@ -20,6 +22,9 @@ export const ar = {
   parents: 'الوالدان',
   father: 'والد',
   mother: 'والدة',
+  /** field labels in the add/edit form (the two above are relation roles) */
+  fatherField: 'الأب',
+  motherField: 'الأم',
   spouses: 'الزوج/الزوجة',
   children: (n: string) => `الأبناء (${n})`,
   occupation: 'الوظيفة',
@@ -65,6 +70,8 @@ export const ar = {
   errFatherMale: 'يجب أن يكون الوالد ذكراً',
   errMotherFemale: 'يجب أن تكون الوالدة أنثى',
   errPhotoTooBig: 'حجم الصورة كبير جداً (الحد ٢٠٠ كيلوبايت)',
+  errPhotoRead: 'تعذّر قراءة الصورة',
+  errExportPng: 'تعذّر تصدير الصورة',
   errBadFile: 'الملف غير صالح',
   emptyTree: 'الشجرة فارغة — ابدأ بإضافة أول فرد',
 } as const

@@ -21,16 +21,21 @@ interface TreeState {
 const newId = () =>
   globalThis.crypto?.randomUUID?.() ?? `p-${Math.abs(Date.now() ^ performance.now()).toString(36)}`
 
-/** Keep both sides of a spouse link in step. */
+/**
+ * Keep both sides of a spouse link in step. `people` is only a shallow copy of
+ * the previous state, so every person this touches is replaced rather than
+ * mutated — otherwise the edit would also rewrite the state we came from.
+ */
 function symmetrize(people: Record<string, Person>): void {
+  const links = new Map<string, Set<string>>()
   for (const p of Object.values(people)) {
-    p.spouseIds = [...new Set(p.spouseIds.filter((sid) => sid !== p.id && people[sid]))]
+    links.set(p.id, new Set(p.spouseIds.filter((sid) => sid !== p.id && people[sid])))
   }
-  for (const p of Object.values(people)) {
-    for (const sid of p.spouseIds) {
-      const other = people[sid]
-      if (!other.spouseIds.includes(p.id)) other.spouseIds.push(p.id)
-    }
+  for (const [id, ids] of links) {
+    for (const sid of ids) links.get(sid)?.add(id)
+  }
+  for (const [id, ids] of links) {
+    people[id] = { ...people[id], spouseIds: [...ids] }
   }
 }
 

@@ -51,6 +51,16 @@ describe('treeStore', () => {
     expect(store().doc.people['p-beta'].spouseIds).not.toContain(id)
   })
 
+  it('does not write spouse links back into the previous state', () => {
+    const before = store().doc
+    const tariqBefore = before.people['p-beta']
+    const id = store().addPerson({ name: 'نورة', gender: 'female', spouseIds: ['p-beta'] })
+    expect(store().doc.people['p-beta'].spouseIds).toContain(id)
+    // the snapshot taken before the edit must be untouched
+    expect(tariqBefore.spouseIds).toHaveLength(0)
+    expect(before.people['p-beta'].spouseIds).toHaveLength(0)
+  })
+
   it('detaches children and spouses when a person is deleted', () => {
     store().deletePerson('p-gamma')
     const people = store().doc.people

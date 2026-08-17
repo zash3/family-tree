@@ -78,6 +78,8 @@ export default function App() {
         const before = previous?.spouseIds[0]
         if (before && before !== draft.spouseId) unlinkSpouse(draft.id, before)
         if (draft.spouseId) linkSpouse(draft.id, draft.spouseId)
+        // reopen the detail sheet so the edit is visible straight away
+        setSelectedId(draft.id)
       } else {
         const id = addPerson({ ...payload, spouseIds: [] })
         if (draft.spouseId) linkSpouse(id, draft.spouseId)
@@ -149,7 +151,11 @@ export default function App() {
 
   const exportPng = async () => {
     if (!svgRef.current) return
-    download(await svgToPngBlob(svgRef.current), 'family-tree.png')
+    try {
+      download(await svgToPngBlob(svgRef.current), 'family-tree.png')
+    } catch {
+      window.alert(ar.errExportPng)
+    }
   }
 
   return (

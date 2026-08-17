@@ -65,6 +65,7 @@ export default function PersonForm({ open, initial, people, error, onSubmit, onC
     }
     const reader = new FileReader()
     reader.onload = () => set('photoDataUrl', String(reader.result))
+    reader.onerror = () => setLocalError(ar.errPhotoRead)
     reader.readAsDataURL(file)
   }
 
@@ -86,13 +87,14 @@ export default function PersonForm({ open, initial, people, error, onSubmit, onC
           />
         </Row>
 
-        <Row label={ar.gender}>
-          <div className="flex gap-2">
+        <Group label={ar.gender}>
+          <div className="flex gap-2" role="group" aria-label={ar.gender}>
             {(['male', 'female'] as const).map((g) => (
               <button
                 type="button"
                 key={g}
                 onClick={() => set('gender', g)}
+                aria-pressed={draft.gender === g}
                 className={`rounded-lg px-4 py-2 text-sm ring-1 ${
                   draft.gender === g
                     ? 'bg-[var(--color-node)] text-white ring-[var(--color-node)]'
@@ -103,7 +105,7 @@ export default function PersonForm({ open, initial, people, error, onSubmit, onC
               </button>
             ))}
           </div>
-        </Row>
+        </Group>
 
         <Row label={ar.lineage}>
           <textarea
@@ -156,29 +158,32 @@ export default function PersonForm({ open, initial, people, error, onSubmit, onC
           </Row>
         </div>
 
-        <Row label={ar.father}>
+        <Group label={ar.fatherField}>
           <PersonPicker
+            label={ar.fatherField}
             options={males}
             value={draft.fatherId}
             onChange={(v) => set('fatherId', v)}
           />
-        </Row>
-        <Row label={ar.mother}>
+        </Group>
+        <Group label={ar.motherField}>
           <PersonPicker
+            label={ar.motherField}
             options={females}
             value={draft.motherId}
             onChange={(v) => set('motherId', v)}
           />
-        </Row>
-        <Row label={ar.spouses}>
+        </Group>
+        <Group label={ar.spouses}>
           <PersonPicker
+            label={ar.spouses}
             options={spouseOptions}
             value={draft.spouseId}
             onChange={(v) => set('spouseId', v)}
           />
-        </Row>
+        </Group>
 
-        <Row label={ar.photo}>
+        <Group label={ar.photo}>
           <div className="flex items-center gap-3">
             {draft.photoDataUrl && (
               <img src={draft.photoDataUrl} alt="" className="size-12 rounded-full object-cover" />
@@ -187,6 +192,7 @@ export default function PersonForm({ open, initial, people, error, onSubmit, onC
               type="file"
               accept="image/*"
               className="text-sm"
+              aria-label={ar.photo}
               onChange={(e) => onPhoto(e.target.files?.[0])}
             />
             {draft.photoDataUrl && (
@@ -199,7 +205,7 @@ export default function PersonForm({ open, initial, people, error, onSubmit, onC
               </button>
             )}
           </div>
-        </Row>
+        </Group>
 
         <Row label={ar.notes}>
           <textarea
@@ -249,16 +255,33 @@ export default function PersonForm({ open, initial, people, error, onSubmit, onC
   )
 }
 
-const input =
-  'w-full rounded-lg border border-slate-200 bg-white px-3 py-2 outline-none focus:border-[var(--color-node)]'
+/** Field styling without a width, so flex rows can size their own children. */
+const field =
+  'rounded-lg border border-slate-200 bg-white px-3 py-2 outline-none focus:border-[var(--color-node)]'
+const input = `w-full ${field}`
 const ghost = 'rounded-lg border border-slate-200 px-4 py-2 text-slate-600 hover:bg-slate-100'
+const rowLabel = 'mb-1 block text-sm text-slate-500'
 
+/** A row wrapping exactly one form control, so the label targets it. */
 function Row({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <label className="block">
-      <span className="mb-1 block text-sm text-slate-500">{label}</span>
+      <span className={rowLabel}>{label}</span>
       {children}
     </label>
+  )
+}
+
+/**
+ * A row holding several controls (or none). A `<label>` here would name every
+ * control inside it after the group, so this uses a plain heading instead.
+ */
+function Group({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <div className="block">
+      <span className={rowLabel}>{label}</span>
+      {children}
+    </div>
   )
 }
 
@@ -274,10 +297,12 @@ function usePeopleOptions(people: Record<string, Person>, gender: Gender, exclud
 
 /** A filterable select — usable with thousands of people without a heavy combobox. */
 function PersonPicker({
+  label,
   options,
   value,
   onChange,
 }: {
+  label: string
   options: Person[]
   value: string
   onChange: (id: string) => void
@@ -299,13 +324,15 @@ function PersonPicker({
   return (
     <div className="flex gap-2">
       <input
-        className={`${input} w-2/5`}
-        placeholder={ar.searchPlaceholder}
+        className={`${field} w-2/5 min-w-0 shrink-0`}
+        placeholder={ar.filterPlaceholder}
+        aria-label={ar.filterPlaceholder}
         value={filter}
         onChange={(e) => setFilter(e.target.value)}
       />
       <select
-        className={`${input} flex-1`}
+        className={`${field} min-w-0 flex-1`}
+        aria-label={label}
         value={value}
         onChange={(e) => onChange(e.target.value)}
       >
