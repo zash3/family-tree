@@ -1,0 +1,73 @@
+/** Every user-facing string lives here so a second locale stays possible. */
+export const ar = {
+  appTitle: 'شجرة العائلة',
+  members: (n: string) => `${n} فرداً`,
+  searchPlaceholder: 'ابحث عن اسم، نسب، أو فرع...',
+  noResults: 'لا توجد نتائج',
+  allBranches: 'كل الفروع',
+
+  add: 'إضافة فرد',
+  edit: 'تعديل',
+  remove: 'حذف',
+  save: 'حفظ',
+  cancel: 'إلغاء',
+  close: 'إغلاق',
+  back: 'رجوع',
+  confirm: 'تأكيد',
+
+  root: 'الجذر',
+  branch: 'الفرع',
+  parents: 'الوالدان',
+  father: 'والد',
+  mother: 'والدة',
+  spouses: 'الزوج/الزوجة',
+  children: (n: string) => `الأبناء (${n})`,
+  occupation: 'الوظيفة',
+  unspecified: 'غير محددة',
+  male: 'ذكر',
+  female: 'أنثى',
+  lineage: 'النسب',
+  bio: 'نبذة',
+  notes: 'ملاحظات',
+  birthYear: 'سنة الميلاد',
+  deathYear: 'سنة الوفاة',
+  photo: 'الصورة',
+  name: 'الاسم',
+  gender: 'الجنس',
+
+  addSon: 'إضافة ابن',
+  addDaughter: 'إضافة ابنة',
+  addSpouse: 'إضافة زوج/زوجة',
+  none: 'بدون',
+
+  zoomIn: 'تكبير',
+  zoomOut: 'تصغير',
+  resetView: 'إعادة الضبط',
+  centerOnPerson: 'توسيط على الشخص',
+
+  exportJson: 'تصدير JSON',
+  importJson: 'استيراد JSON',
+  exportPng: 'تصدير صورة',
+  print: 'طباعة',
+  resetData: 'استعادة البيانات الأولية',
+
+  confirmDelete: (name: string) =>
+    `سيتم حذف "${name}" وفك ارتباطه بوالديه وأبنائه. هل تريد المتابعة؟`,
+  confirmImport: 'سيتم استبدال الشجرة الحالية بالكامل. هل تريد المتابعة؟',
+  confirmReset: 'سيتم مسح كل التعديلات والعودة للبيانات الأولية. هل تريد المتابعة؟',
+  confirmDiscard: 'لديك تعديلات غير محفوظة. هل تريد تجاهلها؟',
+  discard: 'تجاهل',
+  keepEditing: 'متابعة التعديل',
+
+  errNameRequired: 'الاسم مطلوب',
+  errSelfParent: 'لا يمكن أن يكون الشخص والداً لنفسه',
+  errCycle: 'لا يمكن إنشاء دورة في النسب',
+  errFatherMale: 'يجب أن يكون الوالد ذكراً',
+  errMotherFemale: 'يجب أن تكون الوالدة أنثى',
+  errPhotoTooBig: 'حجم الصورة كبير جداً (الحد ٢٠٠ كيلوبايت)',
+  errBadFile: 'الملف غير صالح',
+  emptyTree: 'الشجرة فارغة — ابدأ بإضافة أول فرد',
+} as const
+
+const arabicDigits = new Intl.NumberFormat('ar-SA')
+export const num = (n: number) => arabicDigits.format(n)

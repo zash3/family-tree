@@ -1,0 +1,33 @@
+@import 'tailwindcss';
+@import '@fontsource/tajawal/400.css';
+@import '@fontsource/tajawal/700.css';
+
+@theme {
+  --font-sans: 'Tajawal', ui-sans-serif, system-ui, sans-serif;
+  --color-node: #173b7c;
+  --color-node-soft: #eef2fb;
+  --color-female: #f3bedc;
+  --color-female-ink: #7a2a55;
+  --color-link: #8b8f96;
+  --color-accent: #c8102e;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  background: #fbfaf6;
+  color: #16202e;
+  overflow-x: hidden;
+}
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+}
