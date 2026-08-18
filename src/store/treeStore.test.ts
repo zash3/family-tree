@@ -16,9 +16,9 @@ describe('treeStore', () => {
       name: 'التاسع',
       gender: 'male',
       spouseIds: [],
-      fatherId: 'p-beta',
+      fatherId: 'p-4',
     })
-    expect(childrenOf(store().doc.people, 'p-beta').map((p) => p.id)).toContain(id)
+    expect(childrenOf(store().doc.people, 'p-4').map((p) => p.id)).toContain(id)
   })
 
   it('rejects an empty name', () => {
@@ -28,52 +28,52 @@ describe('treeStore', () => {
   })
 
   it('rejects a cycle in the lineage', () => {
-    expect(() => store().updatePerson('p-alpha', { fatherId: 'p-beta' })).toThrow(
+    expect(() => store().updatePerson('p-1', { fatherId: 'p-4' })).toThrow(
       ValidationError,
     )
-    expect(store().doc.people['p-alpha'].fatherId).toBeUndefined()
+    expect(store().doc.people['p-1'].fatherId).toBeUndefined()
   })
 
   it('rejects a self parent', () => {
-    expect(() => store().updatePerson('p-beta', { fatherId: 'p-beta' })).toThrow(ValidationError)
+    expect(() => store().updatePerson('p-4', { fatherId: 'p-4' })).toThrow(ValidationError)
   })
 
   it('rejects a female father', () => {
-    expect(() => store().updatePerson('p-beta', { fatherId: 'p-delta' })).toThrow(ValidationError)
+    expect(() => store().updatePerson('p-4', { fatherId: 'p-3' })).toThrow(ValidationError)
   })
 
   it('keeps spouse links symmetric', () => {
     const id = store().addPerson({ name: 'نورة', gender: 'female', spouseIds: [] })
-    store().linkSpouse('p-beta', id)
-    expect(store().doc.people[id].spouseIds).toContain('p-beta')
-    store().unlinkSpouse('p-beta', id)
-    expect(store().doc.people[id].spouseIds).not.toContain('p-beta')
-    expect(store().doc.people['p-beta'].spouseIds).not.toContain(id)
+    store().linkSpouse('p-4', id)
+    expect(store().doc.people[id].spouseIds).toContain('p-4')
+    store().unlinkSpouse('p-4', id)
+    expect(store().doc.people[id].spouseIds).not.toContain('p-4')
+    expect(store().doc.people['p-4'].spouseIds).not.toContain(id)
   })
 
   it('does not write spouse links back into the previous state', () => {
     const before = store().doc
-    const tariqBefore = before.people['p-beta']
-    const id = store().addPerson({ name: 'نورة', gender: 'female', spouseIds: ['p-beta'] })
-    expect(store().doc.people['p-beta'].spouseIds).toContain(id)
+    const sonBefore = before.people['p-4']
+    const id = store().addPerson({ name: 'نورة', gender: 'female', spouseIds: ['p-4'] })
+    expect(store().doc.people['p-4'].spouseIds).toContain(id)
     // the snapshot taken before the edit must be untouched
-    expect(tariqBefore.spouseIds).toHaveLength(0)
-    expect(before.people['p-beta'].spouseIds).toHaveLength(0)
+    expect(sonBefore.spouseIds).toHaveLength(0)
+    expect(before.people['p-4'].spouseIds).toHaveLength(0)
   })
 
   it('detaches children and spouses when a person is deleted', () => {
-    store().deletePerson('p-gamma')
+    store().deletePerson('p-2')
     const people = store().doc.people
-    expect(people['p-gamma']).toBeUndefined()
-    expect(people['p-beta'].fatherId).toBeUndefined()
-    expect(people['p-beta'].motherId).toBe('p-delta')
-    expect(people['p-delta'].spouseIds).toHaveLength(0)
+    expect(people['p-2']).toBeUndefined()
+    expect(people['p-4'].fatherId).toBeUndefined()
+    expect(people['p-4'].motherId).toBe('p-3')
+    expect(people['p-3'].spouseIds).toHaveLength(0)
   })
 
   it('round-trips through export and import', () => {
     const exported = JSON.parse(JSON.stringify(store().exportDoc()))
     store().resetToSeed()
-    store().deletePerson('p-beta')
+    store().deletePerson('p-4')
     store().importDoc(exported)
     expect(Object.keys(store().doc.people).sort()).toEqual(Object.keys(exported.people).sort())
   })

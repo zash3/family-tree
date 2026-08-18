@@ -33,13 +33,12 @@ be on the same Wi-Fi.
 
 ## Deploying
 
-```bash
-npm run deploy     # builds and pushes dist/ to the gh-pages branch
-```
+**Push to `main`.** `.github/workflows/deploy.yml` typechecks, runs the tests,
+builds, and publishes to GitHub Pages; a failing check stops the deploy, so a
+broken build never reaches the live site. Deploys can also be started by hand
+from the Actions tab (`workflow_dispatch`).
 
-GitHub Pages serves the `gh-pages` branch, so the deploy is just that push;
-`scripts/deploy-pages.sh` does it through a temporary git worktree, keeping the
-build output out of `main`'s history. `vite.config.ts` sets `base` to
+`vite.config.ts` sets `base` to
 `/family-tree/` because Pages serves the app from a subpath — override with
 `BASE_PATH=/ npm run build` for a domain root. The service worker is registered
 at `import.meta.env.BASE_URL`, not `/`, or it would fall outside that scope.

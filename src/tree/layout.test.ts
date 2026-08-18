@@ -20,16 +20,16 @@ describe('computeLayout', () => {
   it('puts each generation on its own row, deeper generations lower', () => {
     const layout = computeLayout(seed())
     const y = (id: string) => layout.byId.get(id)!.y
-    expect(y('p-gamma')).toBeGreaterThan(y('p-alpha'))
-    expect(y('p-beta')).toBeGreaterThan(y('p-gamma'))
-    expect(y('p-gamma-2')).toBeGreaterThan(y('p-beta'))
-    expect(y('p-beta') - y('p-gamma')).toBe(ROW_H)
+    expect(y('p-2')).toBeGreaterThan(y('p-1'))
+    expect(y('p-4')).toBeGreaterThan(y('p-2'))
+    expect(y('p-10')).toBeGreaterThan(y('p-4'))
+    expect(y('p-4') - y('p-2')).toBe(ROW_H)
   })
 
   it('draws a spouse beside her husband on the same row', () => {
     const layout = computeLayout(seed())
-    const husband = layout.byId.get('p-gamma')!
-    const wife = layout.byId.get('p-delta')!
+    const husband = layout.byId.get('p-2')!
+    const wife = layout.byId.get('p-3')!
     expect(wife.y).toBe(husband.y)
     expect(wife.shape).toBe('circle')
     // mirrored for RTL: the spouse sits to the left of the primary
@@ -38,7 +38,7 @@ describe('computeLayout', () => {
 
   it('mirrors the layout so siblings read right to left in birth order', () => {
     const layout = computeLayout(seed())
-    const xs = ['p-beta', 'p-epsilon', 'p-zeta', 'p-eta'].map((id) => layout.byId.get(id)!.x)
+    const xs = ['p-4', 'p-5', 'p-6', 'p-7'].map((id) => layout.byId.get(id)!.x)
     for (let i = 1; i < xs.length; i += 1) expect(xs[i]).toBeLessThan(xs[i - 1])
   })
 
@@ -57,8 +57,8 @@ describe('computeLayout', () => {
 
   it('connects every child to its parent cluster', () => {
     const layout = computeLayout(seed())
-    for (const id of ['p-beta', 'p-epsilon', 'p-iota']) {
-      expect(layout.edges.some((e) => e.id === `drop-p-gamma-${id}`)).toBe(true)
+    for (const id of ['p-4', 'p-5', 'p-9']) {
+      expect(layout.edges.some((e) => e.id === `drop-p-2-${id}`)).toBe(true)
     }
   })
 
@@ -73,6 +73,6 @@ describe('computeLayout', () => {
   })
 
   it('keeps the node box height stable', () => {
-    expect(computeLayout(seed()).byId.get('p-beta')!.h).toBe(NODE_H)
+    expect(computeLayout(seed()).byId.get('p-4')!.h).toBe(NODE_H)
   })
 })

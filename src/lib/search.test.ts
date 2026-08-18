@@ -13,12 +13,13 @@ describe('search', () => {
     expect(normalizeArabic('مُحَمَّد')).toBe('محمد')
   })
 
-  it('matches on name, lineage and branch', () => {
+  it('matches on name, lineage, branch and occupation', () => {
     const people = seedDoc().people
-    expect(searchPeople(people, 'أسامة').map((p) => p.name)).toContain('اسامة')
-    expect(searchPeople(people, '')).toHaveLength(0)
-    expect(searchPeople(people, '').map((p) => p.id)).toContain('p-gamma')
-    expect(searchPeople(people, 'فرع الثاني').map((p) => p.id)).toContain('p-gamma-2')
+    expect(searchPeople(people, 'نوره').map((p) => p.name)).toContain('نورة')
+    expect(searchPeople(people, 'بن سالم').map((p) => p.id)).toContain('p-2')
+    expect(searchPeople(people, 'فرع أحمد').map((p) => p.id)).toContain('p-10')
+    expect(searchPeople(people, 'معلم').map((p) => p.id)).toContain('p-2')
+    expect(searchPeople(people, 'زيتون')).toHaveLength(0)
   })
 
   it('returns nothing for a blank query', () => {
