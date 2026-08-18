@@ -9,18 +9,12 @@ import type { Person, TreeDoc } from '../model/types'
  *
  * This migration clears them out, without throwing away anyone's real work.
  */
-const LEGACY_IDS = new Set([
-  'p-alpha',
-  'p-gamma',
-  'p-gamma-2',
-  'p-delta',
-  'p-beta',
-  'p-epsilon',
-  'p-zeta',
-  'p-eta',
-  'p-theta',
-  'p-iota',
-])
+/**
+ * The retired example named its rows after its people (`p-<name>`); the current
+ * one numbers them (`p-1`) and anything the user adds gets a UUID. Matching on
+ * that shape identifies the old rows without naming them here.
+ */
+const LEGACY_ID = /^p-[a-z]+(-\d+)?$/
 
 export const LEGACY_BACKUP_KEY = 'family-tree/backup-legacy-seed'
 
@@ -35,7 +29,7 @@ export const LEGACY_BACKUP_KEY = 'family-tree/backup-legacy-seed'
  */
 export function isLegacySeedDoc(doc: TreeDoc | undefined): boolean {
   const ids = Object.keys(doc?.people ?? {})
-  return ids.length > 0 && ids.every((id) => LEGACY_IDS.has(id))
+  return ids.length > 0 && ids.every((id) => LEGACY_ID.test(id))
 }
 
 /**
