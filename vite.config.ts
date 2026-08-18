@@ -35,6 +35,9 @@ function precacheServiceWorker(): Plugin {
 }
 
 export default defineConfig({
+  // GitHub Pages serves the project at /family-tree/, so every asset URL needs
+  // that prefix. Override with BASE_PATH=/ when deploying to a domain root.
+  base: process.env.BASE_PATH ?? '/family-tree/',
   plugins: [react(), tailwindcss(), precacheServiceWorker()],
   // Listen on the LAN so a phone on the same Wi-Fi can open the app. The
   // allowedHosts entry lets a Tailscale HTTPS proxy (*.ts.net) through Vite's
