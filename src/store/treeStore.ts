@@ -3,6 +3,7 @@ import { persist } from 'zustand/middleware'
 import { seedDoc } from '../data/seed'
 import type { Person, TreeDoc } from '../model/types'
 import { assertValidPerson, parseDoc } from '../model/validate'
+import { migrateLegacySeed } from './migrateLegacySeed'
 
 export const STORAGE_KEY = 'family-tree/v1'
 
@@ -110,9 +111,11 @@ export const useTreeStore = create<TreeState>()(
     }),
     {
       name: STORAGE_KEY,
-      version: 1,
+      // v2 retires the original example tree; see migrateLegacySeed.
+      version: 2,
       partialize: (state) => ({ doc: state.doc }),
-      migrate: (persisted) => persisted as { doc: TreeDoc },
+      migrate: (persisted, version) =>
+        version < 2 ? migrateLegacySeed(persisted) : (persisted as { doc: TreeDoc }),
     },
   ),
 )
