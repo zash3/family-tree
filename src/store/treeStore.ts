@@ -9,6 +9,10 @@ export const STORAGE_KEY = 'family-tree/v1'
 
 interface TreeState {
   doc: TreeDoc
+  /** the tree as it was just before clearAll, for a single-step undo */
+  undoDoc?: TreeDoc
+  clearAll: () => void
+  undoClear: () => void
   addPerson: (draft: Omit<Person, 'id'>) => string
   updatePerson: (id: string, patch: Partial<Omit<Person, 'id'>>) => void
   deletePerson: (id: string) => void
@@ -52,7 +56,7 @@ export const useTreeStore = create<TreeState>()(
         assertValidPerson(people, person)
         people[id] = person
         symmetrize(people)
-        set({ doc: { ...get().doc, people } })
+        set({ doc: { ...get().doc, people }, undoDoc: undefined })
         return id
       },
 
@@ -102,12 +106,27 @@ export const useTreeStore = create<TreeState>()(
       importDoc(raw) {
         const doc = parseDoc(raw)
         symmetrize(doc.people)
-        set({ doc })
+        set({ doc, undoDoc: undefined })
       },
 
       exportDoc: () => get().doc,
 
-      resetToSeed: () => set({ doc: seedDoc() }),
+      /**
+       * Start an empty tree. Emptying is one action rather than N deletions,
+       * and the previous tree is held in memory so the very next tap can undo
+       * it — the confirm dialog alone is a thin guard on a phone.
+       */
+      clearAll() {
+        const current = get().doc
+        set({ doc: { ...current, people: {} }, undoDoc: current })
+      },
+
+      undoClear() {
+        const undoDoc = get().undoDoc
+        if (undoDoc) set({ doc: undoDoc, undoDoc: undefined })
+      },
+
+      resetToSeed: () => set({ doc: seedDoc(), undoDoc: undefined }),
     }),
     {
       name: STORAGE_KEY,

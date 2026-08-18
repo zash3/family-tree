@@ -92,3 +92,35 @@ describe('treeStore', () => {
     expect(() => store().importDoc({ nope: true })).toThrow(ValidationError)
   })
 })
+
+describe('clearAll', () => {
+  beforeEach(() => {
+    useTreeStore.setState({ doc: seedDoc(), undoDoc: undefined })
+  })
+
+  it('empties the whole tree in one action', () => {
+    store().clearAll()
+    expect(Object.keys(store().doc.people)).toHaveLength(0)
+  })
+
+  it('can be undone in one step', () => {
+    const before = Object.keys(store().doc.people).sort()
+    store().clearAll()
+    store().undoClear()
+    expect(Object.keys(store().doc.people).sort()).toEqual(before)
+    expect(store().undoDoc).toBeUndefined()
+  })
+
+  it('retires the undo once the user starts building', () => {
+    store().clearAll()
+    store().addPerson({ name: 'سعود', gender: 'male', spouseIds: [] })
+    expect(store().undoDoc).toBeUndefined()
+    store().undoClear()
+    expect(Object.keys(store().doc.people)).toHaveLength(1)
+  })
+
+  it('keeps the title so an emptied tree is still the same document', () => {
+    store().clearAll()
+    expect(store().doc.title).toBe(seedDoc().title)
+  })
+})

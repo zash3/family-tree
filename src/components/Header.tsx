@@ -16,6 +16,7 @@ interface Props {
   onExportJson: () => void
   onImportJson: (file: File) => void
   onExportPng: () => void
+  onNewTree: () => void
   onReset: () => void
 }
 
@@ -32,6 +33,7 @@ export default function Header({
   onExportJson,
   onImportJson,
   onExportPng,
+  onNewTree,
   onReset,
 }: Props) {
   const [focused, setFocused] = useState(false)
@@ -54,6 +56,10 @@ export default function Header({
   const close = () => setToolsOpen(false)
   const tools = (
     <>
+      {/* first, and visibly destructive: starting over is a common first move */}
+      <ToolButton close={close} onClick={onNewTree} tone="danger">
+        {ar.newTree}
+      </ToolButton>
       <ToolButton close={close} onClick={onExportJson}>
         {ar.exportJson}
       </ToolButton>
@@ -183,15 +189,17 @@ export default function Header({
 function ToolButton({
   onClick,
   close,
+  tone,
   children,
 }: {
   onClick: () => void
   close: () => void
+  tone?: 'danger'
   children: React.ReactNode
 }) {
   return (
     <button
-      className={chip}
+      className={tone === 'danger' ? dangerChip : chip}
       onClick={() => {
         close()
         onClick()
@@ -201,6 +209,9 @@ function ToolButton({
     </button>
   )
 }
+
+const dangerChip =
+  'flex min-h-11 items-center rounded-lg border border-red-200 px-3 text-sm text-red-600 active:bg-red-50 sm:min-h-0 sm:py-2 sm:hover:bg-red-50'
 
 const chip =
   'flex min-h-11 items-center rounded-lg border border-slate-200 px-3 text-sm text-slate-700 active:bg-slate-100 sm:min-h-0 sm:py-2 sm:hover:bg-slate-100'

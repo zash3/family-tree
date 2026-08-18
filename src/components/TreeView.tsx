@@ -13,6 +13,9 @@ interface Props {
   dimUnhighlighted?: boolean
   focusId?: string
   onSelect: (id: string) => void
+  /** shown on the empty state, which is where a new user begins */
+  onAddFirst: () => void
+  onRestoreExample?: () => void
   svgRef?: React.RefObject<SVGSVGElement | null>
 }
 
@@ -25,6 +28,8 @@ export default function TreeView({
   dimUnhighlighted,
   focusId,
   onSelect,
+  onAddFirst,
+  onRestoreExample,
   svgRef: externalSvgRef,
 }: Props) {
   const internalRef = useRef<SVGSVGElement | null>(null)
@@ -112,9 +117,28 @@ export default function TreeView({
     select(svg).transition().duration(200).call(behavior.scaleBy, factor)
   }
 
+  // An empty tree is where a new user starts, so it carries the first action
+  // rather than only telling them the tree is empty.
   if (!layout.nodes.length) {
     return (
-      <div className="flex h-full items-center justify-center text-slate-400">{ar.emptyTree}</div>
+      <div className="flex h-full flex-col items-center justify-center gap-3 px-6 text-center">
+        <p className="text-2xl font-bold text-[var(--color-node)]">{ar.startTitle}</p>
+        <p className="max-w-xs text-slate-500">{ar.startHint}</p>
+        <button
+          onClick={onAddFirst}
+          className="mt-2 min-h-12 rounded-xl bg-[var(--color-node)] px-6 text-lg text-white active:opacity-80 sm:hover:opacity-90"
+        >
+          {ar.addFirst}
+        </button>
+        {onRestoreExample && (
+          <button
+            onClick={onRestoreExample}
+            className="min-h-11 px-3 text-sm text-slate-500 underline underline-offset-4"
+          >
+            {ar.restoreExample}
+          </button>
+        )}
+      </div>
     )
   }
 

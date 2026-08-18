@@ -4,7 +4,7 @@ import PersonDetail from './components/PersonDetail'
 import PersonForm from './components/PersonForm'
 import { draftFrom, type FormDraft } from './components/personDraft'
 import TreeView from './components/TreeView'
-import { ar } from './i18n/ar'
+import { ar, num } from './i18n/ar'
 import { download, svgToPngBlob } from './lib/exportPng'
 import { matchesQuery } from './lib/search'
 import { branchesOf } from './model/select'
@@ -20,6 +20,9 @@ export default function App() {
   const linkSpouse = useTreeStore((s) => s.linkSpouse)
   const unlinkSpouse = useTreeStore((s) => s.unlinkSpouse)
   const importDoc = useTreeStore((s) => s.importDoc)
+  const clearAll = useTreeStore((s) => s.clearAll)
+  const undoClear = useTreeStore((s) => s.undoClear)
+  const undoDoc = useTreeStore((s) => s.undoDoc)
   const resetToSeed = useTreeStore((s) => s.resetToSeed)
 
   const people = doc.people
@@ -132,6 +135,15 @@ export default function App() {
     setSelectedId(undefined)
   }
 
+  const startNewTree = () => {
+    const count = Object.keys(people).length
+    if (count && !window.confirm(ar.confirmNewTree(num(count)))) return
+    clearAll()
+    setSelectedId(undefined)
+    setQuery('')
+    setBranch('')
+  }
+
   const exportJson = () => {
     download(
       new Blob([JSON.stringify(doc, null, 2)], { type: 'application/json' }),
@@ -173,6 +185,7 @@ export default function App() {
         onExportJson={exportJson}
         onImportJson={importJson}
         onExportPng={exportPng}
+        onNewTree={startNewTree}
         onReset={() => {
           if (window.confirm(ar.confirmReset)) {
             resetToSeed()
@@ -189,8 +202,24 @@ export default function App() {
           dimUnhighlighted={Boolean(highlightIds)}
           focusId={focusId}
           onSelect={openPerson}
+          onAddFirst={() => setForm(draftFrom())}
+          onRestoreExample={resetToSeed}
           svgRef={svgRef}
         />
+
+        {undoDoc && (
+          <div className="no-print pointer-events-none fixed inset-x-0 bottom-[max(1.25rem,env(safe-area-inset-bottom))] z-30 flex justify-center px-4">
+            <div className="pointer-events-auto flex items-center gap-3 rounded-2xl bg-slate-900/95 px-4 py-2.5 text-white shadow-lg">
+              <span className="text-sm">{ar.cleared(num(Object.keys(undoDoc.people).length))}</span>
+              <button
+                onClick={undoClear}
+                className="min-h-9 rounded-lg bg-white/15 px-3 text-sm font-bold active:bg-white/25"
+              >
+                {ar.undoClear}
+              </button>
+            </div>
+          </div>
+        )}
       </main>
 
       <PersonDetail
